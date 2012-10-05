@@ -33,4 +33,4 @@ sudo python3 setup.py install
 
 ## Example:
 
-See [tests](tests/p/test_all.py) for more details.
+See [tests](https://github.com/moisespsena/py_di/blob/master/tests/p/test_all.py) for more details.
