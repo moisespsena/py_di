@@ -1,0 +1,48 @@
+Traceback (most recent call last):
+  File "setup.py", line 73, in <module>
+    cmdclass={'clean': CleanCommand},
+  File "/usr/lib/python2.7/distutils/core.py", line 152, in setup
+    dist.run_commands()
+  File "/usr/lib/python2.7/distutils/dist.py", line 953, in run_commands
+    self.run_command(cmd)
+  File "/usr/lib/python2.7/distutils/dist.py", line 972, in run_command
+    cmd_obj.run()
+  File "/usr/lib/python2.7/dist-packages/setuptools/command/test.py", line 137, in run
+    self.with_project_on_sys_path(self.run_tests)
+  File "/usr/lib/python2.7/dist-packages/setuptools/command/test.py", line 117, in with_project_on_sys_path
+    func()
+  File "/usr/lib/python2.7/dist-packages/setuptools/command/test.py", line 146, in run_tests
+    testLoader = loader_class()
+  File "/usr/lib/python2.7/unittest/main.py", line 94, in __init__
+    self.parseArgs(argv)
+  File "/usr/lib/python2.7/unittest/main.py", line 149, in parseArgs
+    self.createTests()
+  File "/usr/lib/python2.7/unittest/main.py", line 158, in createTests
+    self.module)
+  File "/usr/lib/python2.7/unittest/loader.py", line 128, in loadTestsFromNames
+    suites = [self.loadTestsFromName(name, module) for name in names]
+  File "/usr/lib/python2.7/unittest/loader.py", line 91, in loadTestsFromName
+    module = __import__('.'.join(parts_copy))
+  File "/home/moi/dev/python/py_di/tests/p/test_all.py", line 12, in <module>
+    @di.comp()
+  File "/home/moi/dev/python/py_di/di/di.py", line 385, in __call__
+    self.init = cls.__init__
+AttributeError: class SimpleComponent has no attribute '__init__'
+[31;1m[ERROR] python2.7 not found[m
+test_50_threads (tests.p.test_all.ConcurrencySingletonComponentInstancesManagerTest) ... ok
+test_current_thread (tests.p.test_all.ConcurrencySingletonComponentInstancesManagerTest) ... ok
+test_50_threads (tests.p.test_all.SingletonPerThreadComponentManagerTest) ... ok
+test_current_thread (tests.p.test_all.SingletonPerThreadComponentManagerTest) ... ok
+test_get_scope (tests.p.test_all.TestScopeRegistry) ... ok
+test_has_scope (tests.p.test_all.TestScopeRegistry) ... ok
+test_set_scope (tests.p.test_all.TestScopeRegistry) ... ok
+test_create_instance_with_params (tests.p.test_all.TestSimpleInstanceCreator) ... ok
+test_create_instance_without_params (tests.p.test_all.TestSimpleInstanceCreator) ... ok
+test_post_init_callback (tests.p.test_all.Tests) ... ok
+test_simple (tests.p.test_all.Tests) ... ok
+test_with_instance_factory (tests.p.test_all.Tests) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.315s
+
+OK

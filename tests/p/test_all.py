@@ -10,7 +10,7 @@ from threading import Thread
 from time import sleep
 
 @di.comp()
-class SimpleComponent: pass
+class SimpleComponent(object): pass
 
 class C1(object):
     def __init__(self,**kwargs):
@@ -176,7 +176,6 @@ class SingletonPerThreadComponentManagerTest(TestCase):
                     assert obj == obj2
                     
                     self.lis.append(obj)
-                    sleep(.2)
                     
                 except Exception as e:
                     self.error = e
@@ -243,7 +242,6 @@ class ConcurrencySingletonComponentInstancesManagerTest(TestCase):
                     assert obj == obj2
                     
                     self.lis.append(obj)
-                    sleep(.1)
                     
                 except Exception as e:
                     self.error = e
