@@ -51,7 +51,7 @@ class CleanCommand(Command):
 
 setup(
     name="py_di",
-    version="1.1",
+    version="1.2",
     author="Moises P. Sena",
     author_email="moisespsena@gmail.com",
     description="Container of Dependency Injection (IOC) implementation.",
