@@ -6,7 +6,7 @@ Created on Sep 25, 2012
 @author: Moises P. Sena <moisespsena@gmail.com>
 '''
 
-from threading import Lock
+from threading import Lock, local
 from inspect import isclass
 
 def import_class(module_name, class_name=None):
@@ -116,6 +116,28 @@ class SingletonComponentInstancesManager(ComponentInstancesManager):
         self.instances = dict()
         
     def get_instance(self, container, cls, **params):
+        if not cls in self.instances:
+            self.instances[cls] = self.create_instance(container, cls, **params)
+            
+        return self.instances[cls]
+
+class SingletonPerThreadComponentInstancesManager(ComponentInstancesManager):
+    """Manage Singleton instances separated per thread"""
+    
+    def __init__(self):
+        # storage for local thread
+        self.storage = local()
+        
+    def get_instances(self):
+        if not hasattr(self.storage, 'instances'):
+            self.storage.instances = dict()
+            
+        return self.storage.instances
+    
+    instances = property(get_instances)
+    
+    def get_instance(self, container, cls, **params):
+        """Returns a cls instance"""
         if not cls in self.instances:
             self.instances[cls] = self.create_instance(container, cls, **params)
             
