@@ -6,6 +6,11 @@ Created on Sep 26, 2012
 import unittest
 from unittest import TestCase
 import di
+from threading import Thread
+from time import sleep
+
+@di.comp()
+class SimpleComponent: pass
 
 class C1(object):
     def __init__(self,**kwargs):
@@ -133,6 +138,74 @@ class Tests(TestCase):
         c = container.instance_for(Controller2)
         
         assert c.dialect == db.dialect
+
+##########################################################
+# Singleton Per Thread Component Instances Manager Tests #
+##########################################################
+
+
+class SingletonPerThreadComponentManagerTest(TestCase):
+    def setUp(self):
+        self.manager = di.SingletonPerThreadComponentInstancesManager()
+        self.container = di.Container()
+        self.container.components[SimpleComponent] = SimpleComponent
         
+    def test_current_thread(self):
+        obj = self.manager.get_instance(self.container, SimpleComponent)
+        assert isinstance(obj, SimpleComponent)
+        
+    def test_50_threads(self):
+        lis = []
+        
+        class AnotherThread(Thread):
+            def __init__(self, manager, container, lis):
+                super(AnotherThread, self).__init__()
+                self.container = container
+                self.manager = manager
+                self.lis = lis
+                self.error = None
+                
+            def run(self):
+                try:
+                    obj = self.manager.get_instance(self.container, SimpleComponent)
+                    assert isinstance(obj, SimpleComponent)
+                    
+                    obj2 = self.manager.get_instance(self.container, SimpleComponent)
+                    assert isinstance(obj2, SimpleComponent)
+                    
+                    assert obj == obj2
+                    
+                    self.lis.append(obj)
+                    sleep(.2)
+                    
+                except Exception as e:
+                    self.error = e
+                    raise
+                
+        ths = []
+        
+        for k in range(50):
+            t = AnotherThread(self.manager, self.container, lis)
+            ths.append(t)
+            t.start()
+            
+        rg = range(len(ths))
+        
+        while 1:
+            bk = False
+            
+            for n in rg:
+                if not ths[n].is_alive():
+                    bk = True
+                    
+            if bk:
+                break
+        
+        for n in rg:
+            if ths[n].error:
+                raise ths[n].error
+            
+        self.assertEqual(len(set(lis)), len(lis))
+
 if __name__ == "__main__":
     unittest.main()
