@@ -207,5 +207,73 @@ class SingletonPerThreadComponentManagerTest(TestCase):
             
         self.assertEqual(len(set(lis)), len(lis))
 
+###########################################################
+# Concurrency Singleton Component Instances Manager Tests #
+###########################################################
+
+class ConcurrencySingletonComponentInstancesManagerTest(TestCase):
+    def setUp(self):
+        self.manager = di.ConcurrencySingletonComponentInstancesManager()
+        self.container = di.Container()
+        self.container.components[SimpleComponent] = SimpleComponent
+        
+    def test_current_thread(self):
+        obj = self.manager.get_instance(self.container, SimpleComponent)
+        assert isinstance(obj, SimpleComponent)
+        
+    def test_50_threads(self):
+        lis = []
+        
+        class AnotherThread(Thread):
+            def __init__(self, manager, container, lis):
+                super(AnotherThread, self).__init__()
+                self.container = container
+                self.manager = manager
+                self.lis = lis
+                self.error = None
+                
+            def run(self):
+                try:
+                    obj = self.manager.get_instance(self.container, SimpleComponent)
+                    assert isinstance(obj, SimpleComponent)
+                    
+                    obj2 = self.manager.get_instance(self.container, SimpleComponent)
+                    assert isinstance(obj2, SimpleComponent)
+                    
+                    assert obj == obj2
+                    
+                    self.lis.append(obj)
+                    sleep(.1)
+                    
+                except Exception as e:
+                    self.error = e
+                    raise
+                
+        ths = []
+        
+        for k in range(50):
+            t = AnotherThread(self.manager, self.container, lis)
+            ths.append(t)
+            t.start()
+            
+        rg = range(len(ths))
+        
+        while 1:
+            bk = False
+            
+            for n in rg:
+                if not ths[n].is_alive():
+                    bk = True
+                    
+            if bk:
+                break
+        
+        for n in rg:
+            if ths[n].error:
+                raise ths[n].error
+            
+        # Singleton is a Unique Instance
+        self.assertEqual(len(set(lis)), 1)
+
 if __name__ == "__main__":
     unittest.main()
